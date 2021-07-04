@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+<style>
+.embed-container {
+position: relative;
+cursor: pointer;
+margin: 30px auto;
+padding: 50px 0;
+border: 5px dashed #aaa;
+color: #aaa;
+border-radius: 5px;
+font-size: 20px;
+font-weight: 600;
+opacity: .4;
+}
+
+.video-list-placeholder {
+    margin: 0 auto;
+    padding: 10px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.placeholder-emphasis {
+    color: #000;
+}
+
+.playbutton {
+ position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  -ms-transform: translate(-50%, -100%);
+  color: white;
+  font-size: 16px;
+  padding: 12px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+</style>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  
+{% for video in videos %}
+    <div class="col">
+        <div class="card">
+        <a href="https://artsauce.moe/uploads/videos/{{video.code ~ video.type}}">
+        <img src="uploads/thumbnails/{{video.code ~ '.jpg'}}" class="card-img-top" alt="thub">
+        <a href="https://artsauce.moe/uploads/videos/{{video.code ~ video.type}}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-play playbutton" viewBox="0 0 16 16">
+        <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
+        </svg>
+        </a>
+        </a>
+        <div class="card-body">
+            <h5 class="card-title">{{video.name}}</h5>
+            <a class="card-text" href="https://artsauce.moe/uploads/videos/{{video.code ~ video.type}}">https://artsauce.moe/{{video.code}}</a>
+            <p class="card-text">{{ video.date ? video.date|date('d-m-Y H:i') : '' }}</p>
+
+        </div>
+        </div>
+  </div>
+{% endfor %}
+  
+
+</div>
+
+<div class="video-list-placeholder"> 
+    <div class="embed-container" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+        <div class="placeholder-emphasis" style="font-size: 50px; margin-bottom: 10px;">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+</svg>        </div>
+        <div class="placeholder-emphasis">Select videos to upload.</div>
+        <div style="color: rgb(102, 102, 102); font-size: 14px; margin-bottom: 20px;">or drag and drop your videos here.</div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script type="text/javascript">
+
+function getExtension(filename) {
+  var parts = filename.split('.');
+  return parts[parts.length - 1];
+}
+
+function isVideo(filename) {
+  var ext = getExtension(filename);
+  switch (ext.toLowerCase()) {
+    case 'm4v':
+    case 'avi':
+    case 'mpg':
+    case 'mp4':
+    case 'mov':
+    case 'webm':
+
+      return true;
+  }
+  return false;
+}
+
+function dropHandler(ev) {
+  console.log('File(s) dropped');
+
+  // Prevent default behavior (Prevent file from being opened)
+  ev.preventDefault();
+
+  if (ev.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    for (var i = 0; i < ev.dataTransfer.items.length; i++) {
+      // If dropped items aren't files, reject them
+      if (ev.dataTransfer.items[i].kind === 'file') {
+        var thisFile = ev.dataTransfer.items[i].getAsFile();
+        if(isVideo(thisFile.name)){
+            var formdata = new FormData();
+                formdata.append('attachement',thisFile,thisFile.name);
+
+            $.ajax({
+                url:"{{ path('upload_file') }}",
+                dataType:"text",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                cache: false,
+                data:formdata,
+                    
+                success:function (php_result) {
+                    console.log(php_result);
+                }
+            });
+
+        }else{
+            console.log("Not a video");
+        }
+        
+      }
+    }
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+      console.log('... file[' + i + '].name = ' + ev.dataTransfer.files[i].name);
+    }
+  }
+}
+
+function dragOverHandler(ev) {
+  console.log('File(s) in drop zone');
+
+  // Prevent default behavior (Prevent file from being opened)
+  ev.preventDefault();
+}
+
+
+</script>
+
+{% endblock %}
