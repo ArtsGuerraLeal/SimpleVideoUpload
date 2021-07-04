@@ -70,6 +70,8 @@ class HomeController extends AbstractController
         if($file){
             if(in_array(strtolower($fileExtension), $valid_extensions)) {
 
+                $file->move($this->getParameter('uploads_dir'),$filename);
+                
                 $fileCode = alphaIDGenerator(rand(1000000, 99999999999));;
                 $filename = $fileCode. '.' . $file->guessClientExtension();
 
@@ -88,6 +90,8 @@ class HomeController extends AbstractController
 
                 $entityManager->persist($videoUpload);
                 $entityManager->flush();
+
+                unlink($file);
             }  
             $response = 1;
         }else{
