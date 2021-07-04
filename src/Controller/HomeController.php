@@ -74,7 +74,7 @@ class HomeController extends AbstractController
                 $fileCode = alphaIDGenerator(rand(1000000, 99999999999));;
                 $filename = $fileCode. '.' . $file->guessClientExtension();
                 
-                $file->move($this->getParameter('uploads_dir'),$filename);
+                $temp_file = $file->move($this->getParameter('uploads_dir'),$filename);
                 
                 $videoUpload = new Video();
                 $videoUpload->setUser($user);
@@ -84,7 +84,7 @@ class HomeController extends AbstractController
                 $videoUpload->setDate(new \DateTime());
 
                 $ffmpeg = FFMpeg::create();
-                $video = $ffmpeg->open($file);
+                $video = $ffmpeg->open($temp_file);
                 $video->filters()->resize(new Dimension(1280, 960))->synchronize();
                 $video->frame(TimeCode::fromSeconds(1))->save($this->getParameter('uploads_dir').'/thumbnails/'.$fileCode.'.jpg');
                 $video->save(new X264, $this->getParameter('uploads_dir').'/videos/'.$fileCode.'.mp4');
@@ -92,7 +92,7 @@ class HomeController extends AbstractController
                 $entityManager->persist($videoUpload);
                 $entityManager->flush();
 
-                unlink($file);
+                unlink($temp_file);
             }  
             $response = 1;
         }else{
