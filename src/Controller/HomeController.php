@@ -84,11 +84,12 @@ class HomeController extends AbstractController
                 $videoUpload->setDate(new \DateTime());
 
                 $ffmpeg = FFMpeg::create();
+                $format = new X264();
+                $format->setAudioCodec("libmp3lame");
                 $video = $ffmpeg->open($temp_file);
                 $video->filters()->resize(new Dimension(1280, 960))->synchronize();
                 $video->frame(TimeCode::fromSeconds(1))->save($this->getParameter('uploads_dir').'/thumbnails/'.$fileCode.'.jpg');
-                $video->save(new X264, $this->getParameter('uploads_dir').'/videos/'.$fileCode.'.mp4');
-
+                $video->save($format, $this->getParameter('uploads_dir').'/videos/'.$fileCode.'.mp4');
                 $entityManager->persist($videoUpload);
                 $entityManager->flush();
 
