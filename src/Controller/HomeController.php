@@ -70,11 +70,12 @@ class HomeController extends AbstractController
         if($file){
             if(in_array(strtolower($fileExtension), $valid_extensions)) {
 
-                $file->move($this->getParameter('uploads_dir'),$filename);
                 
                 $fileCode = alphaIDGenerator(rand(1000000, 99999999999));;
                 $filename = $fileCode. '.' . $file->guessClientExtension();
-
+                
+                $file->move($this->getParameter('uploads_dir'),$filename);
+                
                 $videoUpload = new Video();
                 $videoUpload->setUser($user);
                 $videoUpload->setCode($fileCode);
