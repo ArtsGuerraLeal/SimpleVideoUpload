@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}ArtsTube!{% endblock %}
 
 {% block body %}
 <style>
@@ -43,14 +43,22 @@ opacity: .4;
   border-radius: 5px;
 }
 
+.thumbnail{
+    min-height:150px;
+    max-height:230px;
+    object-fit: cover;
+     
+}
+
 </style>
 <div class="row row-cols-1 row-cols-md-3 g-4">
+
   
 {% for video in videos %}
     <div class="col">
         <div class="card">
         <a href="https://artsauce.moe/uploads/videos/{{video.code ~ video.type}}">
-        <img src="uploads/thumbnails/{{video.code ~ '.jpg'}}" class="card-img-top" alt="thub">
+        <img src="uploads/thumbnails/{{video.code ~ '.jpg'}}" class="card-img-top thumbnail" alt="thub">
         <a href="https://artsauce.moe/uploads/videos/{{video.code ~ video.type}}">
         <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-play playbutton" viewBox="0 0 16 16">
         <path d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"/>
@@ -65,11 +73,11 @@ opacity: .4;
         </div>
         </div>
   </div>
-{% endfor %}
   
+  
+{% endfor %}
 
-</div>
-
+<div class="col">
 <div class="video-list-placeholder"> 
     <div class="embed-container" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
         <div class="placeholder-emphasis" style="font-size: 50px; margin-bottom: 10px;">
@@ -81,6 +89,10 @@ opacity: .4;
         </div>
     </div>
 </div>
+  </div>
+
+</div>
+
 
 
 
